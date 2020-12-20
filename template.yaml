@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  SecurityGroupIds:
+    Type: String
+    Default: sg-0fab09e07c585986b
+  SubnetIDs:
+    Type: String
+    Description: The list of SubnetIDs in your Virtual Private Cloud (VPC)
+    Default: subnet-0c4baa236d5b185f7
+  EFSpath:
+    Type: String
+    Default: /mnt/EFS
+  AccessPointARN:
+    Type: String
+    Description: Access point ARN
+    Default: arn:aws:elasticfilesystem:ap-northeast-1:395218667042:access-point/fsap-099a727c9efadde7f
+
+Resources:
+
+  WorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 10
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      CodeUri: worker/
+      ReservedConcurrentExecutions: 1
+      Policies:
+      - Statement:
+        - Sid: AWSLambdaVPCAccessExecutionRole
+          Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DeleteNetworkInterface
+          Resource: "*"
+        - Sid: AmazonElasticFileSystemClientFullAccess
+          Effect: Allow
+          Action:
+            - elasticfilesystem:ClientMount
+            - elasticfilesystem:ClientRootAccess
+            - elasticfilesystem:ClientWrite
+            - elasticfilesystem:DescribeMountTargets
+          Resource: "*"
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref SecurityGroupIds
+        SubnetIds:
+          - !Ref SubnetIDs
+      FileSystemConfigs:
+        - Arn: !Ref AccessPointARN
+          LocalMountPath: /mnt/EFS
