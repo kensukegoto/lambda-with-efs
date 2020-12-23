@@ -4,18 +4,18 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   SecurityGroupIds:
     Type: String
-    Default: sg-0fab09e07c585986b
+    Default: sg-0e077e40d979e631e
   SubnetIDs:
     Type: String
     Description: The list of SubnetIDs in your Virtual Private Cloud (VPC)
-    Default: subnet-0c4baa236d5b185f7
-  EFSpath:
+    Default: subnet-02107cd10809240ac
+  EFSPath:
     Type: String
-    Default: /mnt/EFS
+    Default: /mnt/efs
   AccessPointARN:
     Type: String
     Description: Access point ARN
-    Default: arn:aws:elasticfilesystem:ap-northeast-1:395218667042:access-point/fsap-099a727c9efadde7f
+    Default: arn:aws:elasticfilesystem:ap-northeast-1:395218667042:access-point/fsap-03eaf47deae7d859f
 
 Resources:
 
@@ -54,4 +54,4 @@ Resources:
           - !Ref SubnetIDs
       FileSystemConfigs:
         - Arn: !Ref AccessPointARN
-          LocalMountPath: /mnt/EFS
+          LocalMountPath: !Ref EFSPath

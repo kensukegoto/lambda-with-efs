@@ -8,7 +8,7 @@ exports.lambdaHandler = async (event, context) => {
   let content;
   try {
     fs.writeFileSync(file_path,`[${new Date().getTime()}] hello!!`);
-    content = fs.readFileSync(file_path,'utf-8');
+    content = fs.readFileSync(filePath);
   } catch (err) {
     return err;
   }
